@@ -170,6 +170,12 @@ button:hover {
     inset 0 -3px 6px rgba(0,0,0,0.4);
   border: 1px solid rgba(255,255,255,0.15);
 }
+.badge.correct {
+  outline: 3px solid #ffd700;   /* ゴールド枠 */
+  box-shadow:
+    0 0 12px rgba(255,215,0,0.9),
+    0 0 20px rgba(255,215,0,0.6);
+}
 .badge:hover {
   transform: scale(1.15);
 }
@@ -262,42 +268,54 @@ function submitOrder() {
 
 function showResults() {
 
-const first = results[0];
-const second = results[1];
+  const first = results[0];
+  const second = results[1];
 
-document.body.innerHTML = `
-  <div class="result-screen">
-    <div class="result-title">RESULT</div>
+  document.body.innerHTML = `
+    <div class="result-screen">
+      <div class="result-title">RESULT</div>
 
-    <div class="result-container">
+      <div class="result-container">
 
-      <div class="result-card">
-        <h3>First Trial</h3>
-        <div class="result-order">
-          ${first.map((n, i) => {
-            const match = first[i] === second[i];
-            return `<div class="badge ${match ? "" : "mismatch"}">${n}</div>`;
-          }).join("")}
+        <div class="result-card">
+          <h3>First Trial</h3>
+          <div class="result-order">
+            ${first.map((n, i) => {
+              const match = first[i] === second[i];
+              const correct = Number(n) === i + 1;
+
+              return `<div class="badge 
+                ${match ? "" : "mismatch"} 
+                ${correct ? "correct" : ""}">
+                ${n}
+              </div>`;
+            }).join("")}
+          </div>
         </div>
+
+        <div class="result-card">
+          <h3>Second Trial</h3>
+          <div class="result-order">
+            ${second.map((n, i) => {
+              const match = first[i] === second[i];
+              const correct = Number(n) === i + 1;
+
+              return `<div class="badge 
+                ${match ? "" : "mismatch"} 
+                ${correct ? "correct" : ""}">
+                ${n}
+              </div>`;
+            }).join("")}
+          </div>
+        </div>
+
       </div>
 
-      <div class="result-card">
-        <h3>Second Trial</h3>
-        <div class="result-order">
-          ${second.map((n, i) => {
-            const match = first[i] === second[i];
-            return `<div class="badge ${match ? "" : "mismatch"}">${n}</div>`;
-          }).join("")}
-        </div>
-      </div>
-
+      <button class="glow-button" onclick="location.reload()">
+        PLAY AGAIN
+      </button>
     </div>
-
-    <button class="glow-button" onclick="location.reload()">
-      PLAY AGAIN
-    </button>
-  </div>
-`;
+  `;
 }
 
 loadSet();
