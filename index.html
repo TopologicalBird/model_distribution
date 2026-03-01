@@ -159,7 +159,7 @@ let results=[];
 let sortableInstance=null;
 let timerInterval=null;
 
-const TIME_LIMIT=45;
+const TIME_LIMIT=40;
 let remainingTime=TIME_LIMIT;
 
 /* =======================
@@ -169,6 +169,7 @@ function showStartScreen(){
   document.body.innerHTML=`
     <div style="padding:100px">
       <h1>Image Sorting Game</h1>
+      <p>Sort the images from rough texture to fine texture. Time limit is 40 seconds per dataset. We have two datasets, so you will try twice.</p>
       <button class="glow-button" onclick="startGame()">START</button>
     </div>`;
 }
