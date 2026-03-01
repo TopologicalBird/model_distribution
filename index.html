@@ -198,6 +198,7 @@ const imageSets = [
 
 let currentSet = 0;
 let results = [];
+let sortableInstance;
 const imageList = document.getElementById("image-list");
 
 function shuffleArray(array) {
@@ -230,7 +231,14 @@ function loadSet() {
     imageList.appendChild(div);
   });
 
-  new Sortable(imageList, { animation: 150 });
+  // すでに存在していたら破棄
+  if (sortableInstance) {
+    sortableInstance.destroy();
+  }
+
+  sortableInstance = new Sortable(imageList, {
+    animation: 150
+  });
 }
 
 function submitOrder() {
