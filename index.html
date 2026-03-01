@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1e1e2f, #12121a);
+  color: white;
+  text-align: center;
+}
+
+h2 {
+  margin-top: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+#progress {
+  margin-top: 5px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+#image-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin: 30px;
+}
+
+.item {
+  background: #2a2a40;
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(0,255,255,0.4);
+}
+
+.item img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+button {
+  margin-bottom: 30px;
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(90deg, #00f5ff, #00ffa3);
+  color: #000;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 15px #00ffa3;
+}
+
+.result-box {
+  background: #222238;
+  margin: 20px auto;
+  padding: 20px;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0,255,200,0.3);
+}
+/* ===== RESULT STYLE ===== */
+
+.result-screen {
+  padding: 40px 20px;
+}
+
+.result-title {
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  letter-spacing: 2px;
+  color: #00ffe5;
+  text-shadow: 0 0 8px #00ffe5;
+}
+
+.result-container {
+  display: flex;
+  flex-direction: column;   /* ← 縦並び */
+  align-items: center;
+  gap: 25px;
+}
+
+.result-card {
+  width: 90%;              /* ← 画面幅を使う */
+  max-width: 900px;        /* ← PCでも広がりすぎない */
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0,255,200,0.25);
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: 0.3s;
+}
+
+.result-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 30px rgba(0,255,200,0.5);
+}
+
+.result-card h3 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #00ffa3;
+}
+
+.result-order {
+  display: flex;
+  flex-wrap: wrap;        /* ← 幅が足りない時だけ折り返す */
+  gap: 8px;
+  justify-content: center;
+}
+
+.glow-button {
+  margin-top: 40px;
+  padding: 14px 32px;
+  font-size: 18px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(90deg,#00f5ff,#00ffa3);
+  color: #000;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.glow-button:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px #00ffa3;
+}
+.badge {
+  min-width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(145deg,#00f5ff,#00ffa3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #000;
+  font-size: 14px;
+  box-shadow: 0 0 8px rgba(0,255,200,0.6);
+  transition: 0.2s;
+}
+.badge.mismatch {
+  background: linear-gradient(145deg,#ff6b6bcc,#c40000cc);
+  color: #fff;
+  box-shadow: 
+    0 0 8px rgba(255,0,0,0.5),
+    inset 0 2px 4px rgba(255,255,255,0.2),
+    inset 0 -3px 6px rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.badge:hover {
+  transform: scale(1.15);
+}
+</style>
+</head>
+
+<body>
+
+<h2 id="title">Set 1</h2>
+
+<div id="image-list"></div>
+
+<button onclick="submitOrder()">Done</button>
+
+<script>
+
+const imageSets = [
+  ["set1/img1.png","set1/img2.png","set1/img3.png","set1/img4.png","set1/img5.png",
+   "set1/img6.png","set1/img7.png","set1/img8.png","set1/img9.png","set1/img10.png",
+   "set1/img11.png","set1/img12.png","set1/img13.png","set1/img14.png","set1/img15.png"],
+
+  ["set2/img1.png","set2/img2.png","set2/img3.png","set2/img4.png","set2/img5.png",
+   "set2/img6.png","set2/img7.png","set2/img8.png","set2/img9.png","set2/img10.png",
+   "set2/img11.png","set2/img12.png","set2/img13.png","set2/img14.png","set2/img15.png"]
+];
+
+let currentSet = 0;
+let results = [];
+const imageList = document.getElementById("image-list");
+
+function shuffleArray(array) {
+  let arr = array.map((value, index) => ({
+    src: value,
+    originalIndex: index + 1
+  }));
+
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function loadSet() {
+  imageList.innerHTML = "";
+
+  let shuffled = shuffleArray(imageSets[currentSet]);
+
+  shuffled.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.dataset.index = item.originalIndex;
+
+    const img = document.createElement("img");
+    img.src = item.src;
+
+    div.appendChild(img);
+    imageList.appendChild(div);
+  });
+
+  new Sortable(imageList, { animation: 150 });
+}
+
+function submitOrder() {
+  const items = document.querySelectorAll(".item");
+  let order = [];
+
+  items.forEach(item => {
+    order.push(item.dataset.index);
+  });
+
+  results.push(order);
+  currentSet++;
+
+  if (currentSet < imageSets.length) {
+    document.getElementById("title").innerText = "Set 2";
+    loadSet();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+
+const first = results[0];
+const second = results[1];
+
+document.body.innerHTML = `
+  <div class="result-screen">
+    <div class="result-title">RESULT</div>
+
+    <div class="result-container">
+
+      <div class="result-card">
+        <h3>First Trial</h3>
+        <div class="result-order">
+          ${first.map((n, i) => {
+            const match = first[i] === second[i];
+            return `<div class="badge ${match ? "" : "mismatch"}">${n}</div>`;
+          }).join("")}
+        </div>
+      </div>
+
+      <div class="result-card">
+        <h3>Second Trial</h3>
+        <div class="result-order">
+          ${second.map((n, i) => {
+            const match = first[i] === second[i];
+            return `<div class="badge ${match ? "" : "mismatch"}">${n}</div>`;
+          }).join("")}
+        </div>
+      </div>
+
+    </div>
+
+    <button class="glow-button" onclick="location.reload()">
+      PLAY AGAIN
+    </button>
+  </div>
+`;
+}
+
+loadSet();
+
+</script>
+
+</body>
+</html>
